@@ -16,6 +16,11 @@ st.markdown(f"""
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px !important;
     }}
+    /* Text Area aur Text Input ka color crystal clear white karne ke liye */
+    .stTextArea textarea, .stTextInput input {
+        color: #ffffff !important;
+        background-color: #1e293b !important;
+    }
     
     .stApp {{
         background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
