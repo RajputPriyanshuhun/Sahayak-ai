@@ -3,7 +3,7 @@ import google.generativeai as genai
 from PIL import Image
 
 st.set_page_config(
-    page_title="SahayakAI1 - Multilingual Assistant", 
+    page_title="Sahayak AI1 - Multilingual Assistant", 
     page_icon="🤖", 
     layout="centered"
 )
@@ -80,7 +80,7 @@ st.markdown(f"""
 ui_texts = {
     "English": {
         "sidebar_header": "⚙️ Controls & Settings",
-        "title": "SahayakAI1: Multilingual Assistant",
+        "title": "Sahayak AI1: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
         "font_label": "🔤 Accessibility: Font Size",
         "current_size": "Current Size",
@@ -102,7 +102,7 @@ ui_texts = {
     },
     "Hindi (हिंदी)": {
         "sidebar_header": "⚙️ नियंत्रण और सेटिंग्स",
-        "title": "सहायक-AI1: बहुभाषी सहायक",
+        "title": "सहायक- AI1: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
         "font_label": "🔤 दृश्यता: फ़ॉन्ट आकार",
         "current_size": "वर्तमान आकार",
@@ -124,7 +124,7 @@ ui_texts = {
     },
     "Punjabi (ਪੰਜਾਬੀ)": {
         "sidebar_header": "⚙️ ਕੰਟਰੋਲ ਅਤੇ ਸੈਟਿੰਗਾਂ",
-        "title": "ਸਹਾਇਕ-AI1: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
+        "title": "ਸਹਾਇਕ- AI1: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
         "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
         "current_size": "ਮੌਜੂਦਾ ਆਕਾਰ",
