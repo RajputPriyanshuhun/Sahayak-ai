@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# Page Configuration for Fast & Smooth Performance
+# Page Configuration
 st.set_page_config(
     page_title="SahayakAI - Multilingual Problem Solver", 
     page_icon="🤖", 
@@ -13,27 +13,43 @@ st.set_page_config(
 if "font_size" not in st.session_state:
     st.session_state.font_size = 16
 
-# Professional CSS Styling
+# Professional 3D Modern CSS Styling & Glassmorphism UI
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px;
     }}
     .stButton>button {{
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 600;
         width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }}
+    .stButton>button:hover {{
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }}
+    /* Custom 3D Font Control Container */
+    .font-control-card {{
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
     }}
     </style>
 """, unsafe_allow_html=True)
 
-# Multilingual UI Dictionary for complete localization
+# Fully Localized UI Dictionary (Natural & Professional Tone)
 ui_texts = {
     "English": {
         "title": "🤖 SahayakAI: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
-        "font_label": "🔤 Font Size (Accessibility)",
+        "font_label": "🔤 Accessibility: Font Size",
         "api_label": "🔑 Enter Gemini API Key",
+        "api_warn": "⚠️ Please enter your Gemini API Key in the sidebar to begin.",
+        "api_tip": "💡 Get a free key instantly from Google AI Studio.",
         "tab1": "💬 Text Solver",
         "tab2": "🎙️ Voice Helper",
         "tab3": "🖼️ Image Analyzer",
@@ -45,21 +61,25 @@ ui_texts = {
     "Hindi (हिंदी)": {
         "title": "🤖 सहायक-AI: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
-        "font_label": "🔤 फ़ॉन्ट साइज़ (अक्षर बड़ा/छोटा करें)",
-        "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
+        "font_label": "🔤 दृश्यता: फ़ॉन्ट आकार नियंत्रण",
+        "api_label": "🔑 जेमिनी एपीआई कुंजी (API Key) दर्ज करें",
+        "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी जेमिनी एपीआई कुंजी दर्ज करें।",
+        "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
         "tab1": "💬 टेक्स्ट समाधान",
         "tab2": "🎙️ आवाज़ सहायक",
         "tab3": "🖼️ चित्र विश्लेषक",
         "t1_sub": "अपनी समस्या या विचार यहाँ लिखें:",
-        "t1_ph": "अपना प्रश्न या समस्या यहाँ टाइप करें...",
+        "t1_ph": "अपना प्रश्न या स्थानीय समस्या यहाँ टाइप करें...",
         "t1_btn": "समाधान प्राप्त करें 🚀",
         "success": "समाधान तैयार है!"
     },
     "Mandayali / Himachali (मंडयाली)": {
         "title": "🤖 सहायक-AI: मंडयाली ते स्थानीय सहायक",
-        "caption": "तुहारी अपनी भाषा मां हर समस्या दा हल",
-        "font_label": "🔤 अक्षर बड़ा-छोटा करो (Font Size)",
+        "caption": "तुहारी अपनी भाषा मां हर समस्या दा सटीक हल",
+        "font_label": "🔤 अक्षर साइज कन्ट્રોલ",
         "api_label": "🔑 Gemini API Key पायो",
+        "api_warn": "⚠️ कम करने तांई अपनी API Key साइडबार मां दर्ज करो जी।",
+        "api_tip": "💡 Google AI Studio तांई मुफ्त की आसानी से मिल जाती है।",
         "tab1": "💬 लिखकरी समस्या हल करो",
         "tab2": "🎙️ बोलकरी सुणो",
         "tab3": "🖼️ फोटो विश्लेषक",
@@ -71,8 +91,10 @@ ui_texts = {
     "Punjabi (ਪੰਜਾਬੀ)": {
         "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
-        "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ (Font Size)",
+        "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
+        "api_warn": "⚠️ ਸ਼ुरू करने के लिए अपनी API कुंजी दर्ज करो।",
+        "api_tip": "💡 Google AI Studio से मुफ्त की प्राप्त करें।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
         "tab2": "🎙️ ਆਵਾਜ਼ ਸਹਾਇਕ",
         "tab3": "🖼️ ਤਸਵੀਰ ਵਿਸ਼ਲੇਸ਼ਕ",
@@ -86,52 +108,51 @@ ui_texts = {
 # Sidebar Controls & Settings
 st.sidebar.header("⚙️ Controls & Settings")
 
-# Language Selection
 selected_lang = st.sidebar.selectbox(
     "🌐 Output & UI Language", 
     ["English", "Hindi (हिंदी)", "Mandayali / Himachali (मंडयाली)", "Punjabi (ਪੰਜਾਬੀ)"]
 )
 
-# Fetch corresponding UI strings safely
 current_ui = ui_texts.get(selected_lang, ui_texts["English"])
 
-# Professional Font Size Accessibility Controls
-st.sidebar.markdown(f"### {current_ui['font_label']}")
-f_col1, f_col2, f_col3 = st.sidebar.columns(3)
-with f_col1:
-    if st.button("➖ A-"):
-        if st.session_state.font_size > 12:
-            st.session_state.font_size -= 2
+# Professional 3D Styled Font Resizer Section in Sidebar
+st.sidebar.markdown(f"**{current_ui['font_label']}**")
+with st.sidebar.container():
+    st.markdown('<div class="font-control-card">', unsafe_allow_html=True)
+    f_col1, f_col2, f_col3 = st.columns(3)
+    with f_col1:
+        if st.button("➖ A-"):
+            if st.session_state.font_size > 12:
+                st.session_state.font_size -= 2
+                st.rerun()
+    with f_col2:
+        if st.button("🔄 Norm"):
+            st.session_state.font_size = 16
             st.rerun()
-with f_col2:
-    if st.button("🔄 Normal"):
-        st.session_state.font_size = 16
-        st.rerun()
-with f_col3:
-    if st.button("➕ A+"):
-        if st.session_state.font_size < 24:
-            st.session_state.font_size += 2
-            st.rerun()
+    with f_col3:
+        if st.button("➕ A+"):
+            if st.session_state.font_size < 26:
+                st.session_state.font_size += 2
+                st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.sidebar.write(f"Size: **{st.session_state.font_size}px**")
+st.sidebar.write(f"Current Size: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
 
-# API Key Input
 api_key = st.sidebar.text_input(current_ui['api_label'], type="password")
 
-# Main Header
+# Main App Header
 st.title(current_ui["title"])
 st.caption(current_ui["caption"])
 
 if not api_key:
-    st.warning("⚠️ Please enter your Gemini API Key in the sidebar to begin.")
-    st.info("💡 Get a free key instantly from [Google AI Studio](https://aistudio.google.com/).")
+    st.warning(current_ui["api_warn"])
+    st.info(current_ui["api_tip"])
 else:
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-3.8-flash")
 
-        # Localized Tabs
         tabs = st.tabs([current_ui["tab1"], current_ui["tab2"], current_ui["tab3"]])
 
         # Tab 1: Text Solver
@@ -143,7 +164,7 @@ else:
                 if user_prompt.strip():
                     with st.spinner("Generating..."):
                         try:
-                            prompt = f"{user_prompt}\n\nProvide the complete response strictly in {selected_lang} language."
+                            prompt = f"{user_prompt}\n\nProvide a natural, professional response strictly in {selected_lang} language."
                             response = model.generate_content(prompt)
                             st.success(current_ui["success"])
                             st.markdown("### Result / परिणाम:")
@@ -164,7 +185,7 @@ else:
                         try:
                             audio_bytes = audio_file.read()
                             audio_data = {"mime_type": audio_file.type, "data": audio_bytes}
-                            response = model.generate_content([f"Analyze this audio and respond in {selected_lang}", audio_data])
+                            response = model.generate_content([f"Analyze this audio and respond naturally in {selected_lang}", audio_data])
                             st.success(current_ui["success"])
                             st.write(response.text)
                         except Exception as e:
@@ -182,7 +203,7 @@ else:
                 if st.button("Analyze Image 🔍", type="primary"):
                     with st.spinner("Analyzing..."):
                         try:
-                            response = model.generate_content([f"{img_prompt}. Respond in {selected_lang}.", image])
+                            response = model.generate_content([f"{img_prompt}. Respond naturally in {selected_lang}.", image])
                             st.success(current_ui["success"])
                             st.write(response.text)
                         except Exception as e:
