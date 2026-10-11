@@ -13,44 +13,44 @@ st.set_page_config(
 if "font_size" not in st.session_state:
     st.session_state.font_size = 14
 
-# Clean Professional Theme with 3D Button Animations & Hover Effects
+# Vibrant Color Mix & Smooth 3D Button Animations CSS
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px !important;
     }}
     
-    /* Clean Dark Theme */
+    /* Vibrant Professional Gradient Theme */
     .stApp {{
-        background-color: #0f172a;
-        color: #ffffff;
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+        color: #f8fafc;
     }}
 
     /* Sidebar Styling */
     section[data-testid="stSidebar"] {{
-        background-color: #1e293b;
-        border-right: 1px solid #334155;
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
     }}
     section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] .stMarkdown {{
         color: #f8fafc !important;
     }}
 
-    /* 3D Animated Buttons with Smooth Hover Effect */
+    /* Vibrant 3D Animated Buttons with Smooth Hover Effect */
     .stButton>button {{
-        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
         color: white;
         border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-weight: 700;
+        padding: 0.6rem 1rem;
         width: 100%;
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.5);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }}
     .stButton>button:hover {{
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
-        background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 24px -4px rgba(168, 85, 247, 0.7);
+        background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
     }}
     .stButton>button:active {{
         transform: translateY(1px);
@@ -58,9 +58,10 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# Fully Localized UI Dictionary
+# Fully Localized UI Dictionary (Including Language Selectbox Label)
 ui_texts = {
     "English": {
+        "lang_label": "🌐 Select Language / भाषा चुनें",
         "sidebar_header": "⚙️ Controls & Settings",
         "title": "🤖 SahayakAI: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
@@ -78,6 +79,7 @@ ui_texts = {
         "success": "Solution Ready!"
     },
     "Hindi (हिंदी)": {
+        "lang_label": "🌐 भाषा चुनें / Select Language",
         "sidebar_header": "⚙️ नियंत्रण और सेटिंग्स",
         "title": "🤖 सहायक-AI: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
@@ -95,6 +97,7 @@ ui_texts = {
         "success": "समाधान तैयार है!"
     },
     "Punjabi (ਪੰਜਾਬੀ)": {
+        "lang_label": "🌐 ਭਾਸ਼ਾ ਚੁנו / Select Language",
         "sidebar_header": "⚙️ ਕੰਟਰੋਲ ਅਤੇ ਸੈਟਿੰਗਾਂ",
         "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
@@ -105,7 +108,7 @@ ui_texts = {
         "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
         "tab2": "🎙️ ਆਵਾਜ਼ ਸਹਾਇਕ",
-        "tab3": "🖼️ ਤਸਵੀर ਵਿਸ਼ਲੇਸ਼ਕ",
+        "tab3": "🖼️ ਤਸਵੀਰ ਵਿਸ਼ਲੇਸ਼ਕ",
         "t1_sub": "ਆਪਣੀ ਸਮੱਸਿਆ ਜਾਂ ਵਿਚਾਰ ਇੱਥੇ ਲਿਖੋ:",
         "t1_ph": "ਆਪਣਾ ਸਵਾਲ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...",
         "t1_btn": "ਹੱਲ ਪ੍ਰਾਪਤ ਕਰੋ 🚀",
@@ -113,19 +116,19 @@ ui_texts = {
     }
 }
 
-# Language Selection (Clean, no box)
+# First determine default selection to render dynamic language label
 default_lang_choice = st.sidebar.selectbox(
     "🌐 Select Language / भाषा चुनें", 
     ["English", "Hindi (हिंदी)", "Punjabi (ਪੰਜਾਬੀ)"]
 )
 
-# Fetch current UI text dictionary
+# Fetch current UI dictionary
 current_ui = ui_texts.get(default_lang_choice, ui_texts["English"])
 
 # Sidebar Header Localized
 st.sidebar.header(current_ui["sidebar_header"])
 
-# Font Resizer Section (Directly rendered without surrounding container box)
+# Font Resizer Section (Clean, no boxes)
 st.sidebar.markdown(f"**{current_ui['font_label']}**")
 f_col1, f_col2, f_col3 = st.sidebar.columns(3)
 with f_col1:
@@ -146,7 +149,7 @@ with f_col3:
 st.sidebar.write(f"{current_ui['current_size']}: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
 
-# API Key Input (Clean, no box)
+# API Key Input (Clean)
 api_key = st.sidebar.text_input(current_ui['api_label'], type="password")
 
 # Main Header Localized
