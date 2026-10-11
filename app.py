@@ -16,6 +16,58 @@ st.markdown(f"""
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px !important;
     }}
+    st.markdown(f"""
+    <style>
+    html, body, [class*="css"] {{
+        font-size: {st.session_state.font_size}px !important;
+    }}
+    
+    .stApp {{
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+        color: #ffffff !important;
+    }}
+
+    section[data-testid="stSidebar"] {{
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }}
+    section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] .stMarkdown, section[data-testid="stSidebar"] span {{
+        color: #ffffff !important;
+        font-weight: 500;
+    }}
+
+    /* Text Area aur Input Box ka text white aur background dark set karne ke liye */
+    .stTextArea textarea, .stTextInput input {{
+        color: #ffffff !important;
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }}
+
+    .stAlert {{
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(99, 102, 241, 0.5) !important;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        border-radius: 12px;
+    }}
+
+    .stButton>button {{
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        padding: 0.6rem 1rem;
+        width: 100%;
+        box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.5);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }}
+    .stButton>button:hover {{
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 24px -4px rgba(168, 85, 247, 0.7);
+        background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+    }}
+    </style>
+""", unsafe_allow_html=True)
     /* Text Area aur Text Input ka color crystal clear white karne ke liye */
     .stTextArea textarea, .stTextInput input {
         color: #ffffff !important;
