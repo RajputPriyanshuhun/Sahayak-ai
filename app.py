@@ -80,7 +80,7 @@ st.markdown(f"""
 ui_texts = {
     "English": {
         "sidebar_header": "⚙️ Controls & Settings",
-        "title": "🤖 SahayakAI: Multilingual Assistant",
+        "title": "SahayakAI: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
         "font_label": "🔤 Accessibility: Font Size",
         "current_size": "Current Size",
@@ -102,7 +102,7 @@ ui_texts = {
     },
     "Hindi (हिंदी)": {
         "sidebar_header": "⚙️ नियंत्रण और सेटिंग्स",
-        "title": "🤖 सहायक-AI: बहुभाषी सहायक",
+        "title": "सहायक-AI: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
         "font_label": "🔤 दृश्यता: फ़ॉन्ट आकार",
         "current_size": "वर्तमान आकार",
@@ -124,7 +124,7 @@ ui_texts = {
     },
     "Punjabi (ਪੰਜਾਬੀ)": {
         "sidebar_header": "⚙️ ਕੰਟਰੋਲ ਅਤੇ ਸੈਟਿੰਗਾਂ",
-        "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
+        "title": "ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
         "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
         "current_size": "ਮੌਜੂਦਾ ਆਕਾਰ",
@@ -145,14 +145,6 @@ ui_texts = {
         "chips": ["🌾 ਫਸਲ ਦੀ ਬਿਮਾਰੀ ਦਾ ਹੱਲ", "📜 ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦੀ ਜਾਣਕਾਰੀ", "⚡ ਊਰਜਾ ਬਚਾਉਣ ਦੇ ਤਰੀਕੇ"]
     }
 }
-
-# Sidebar Top Logo
-st.sidebar.markdown("""
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-        <div style="background: linear-gradient(135deg, #6366f1, #a855f7); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 12px rgba(99,102,241,0.6);">🤖</div>
-        <span style="font-size: 20px; font-weight: 800; color: #ffffff !important;">SahayakAI</span>
-    </div>
-""", unsafe_allow_html=True)
 
 default_lang_choice = st.sidebar.selectbox(
     "🌐 Select Language / भाषा चुनें", 
@@ -187,7 +179,7 @@ api_key_input = st.sidebar.text_input(current_ui['api_label'], type="password", 
 st.session_state.api_key = api_key_input
 
 cleaned_key = st.session_state.api_key.strip()
-is_valid_api = bool(cleaned_key.startswith("AIza") and len(cleaned_key) > 20)
+is_valid_api = bool(len(cleaned_key) > 10)
 
 if cleaned_key:
     if is_valid_api:
@@ -197,8 +189,16 @@ if cleaned_key:
 else:
     st.sidebar.error(current_ui['api_required'])
 
-st.title(current_ui["title"])
-st.caption(current_ui["caption"])
+# Always Visible Main Top Logo & Title Header
+st.markdown("""
+    <div style="display: flex; align-items: center; gap: 15px; background: rgba(255, 255, 255, 0.03); padding: 15px 20px; border-radius: 16px; border: 1px solid rgba(99, 102, 241, 0.3); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); margin-bottom: 20px;">
+        <div style="background: linear-gradient(135deg, #6366f1, #a855f7); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 0 15px rgba(99,102,241,0.6);">🤖</div>
+        <div>
+            <h1 style="margin: 0; color: #ffffff !important; font-size: 26px; font-weight: 800; line-height: 1.2;">{}</h1>
+            <p style="margin: 0; color: #cbd5e1 !important; font-size: 14px; font-weight: 500;">{}</p>
+        </div>
+    </div>
+""".format(current_ui["title"], current_ui["caption"]), unsafe_allow_html=True)
 
 if not cleaned_key or not is_valid_api:
     st.warning(current_ui["api_warn"])
