@@ -9,97 +9,30 @@ st.set_page_config(
     layout="centered"
 )
 
-# Initialize Session State for Font Size
+# Initialize Session State for Font Size to 14px default
 if "font_size" not in st.session_state:
-    st.session_state.font_size = 16
+    st.session_state.font_size = 14
 
-# Professional 3D Neon Glassmorphism & Micro-Interactions CSS
+# Clean & Professional CSS with 14px default
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px;
     }}
-    
-    /* Global App Background & Container Glow */
-    .stApp {{
-        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-        color: #f8fafc;
-    }}
-
-    /* Sidebar Styling */
-    section[data-testid="stSidebar"] {{
-        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-    }}
-
-    /* 3D Modern Buttons with Smooth Hover Animation */
     .stButton>button {{
-        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-weight: 700;
-        padding: 0.6rem 1rem;
-        width: 100%;
-        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }}
-    .stButton>button:hover {{
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.6);
-        background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
-    }}
-    .stButton>button:active {{
-        transform: translateY(1px);
-    }}
-
-    /* Glassmorphism Font Control Card */
-    .font-control-card {{
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 14px;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        margin-bottom: 15px;
-    }}
-
-    /* Text Inputs and Selectboxes */
-    .stTextInput>div>div>input, .stTextArea>div>div>textarea, .stSelectbox>div>div>div {{
-        background-color: rgba(255, 255, 255, 0.07) !important;
-        color: white !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    }}
-    
-    /* Tabs Styling */
-    .stTabs [data-baseweb="tab-list"] {{
-        gap: 8px;
-        background-color: rgba(255, 255, 255, 0.03);
-        padding: 6px;
-        border-radius: 14px;
-    }}
-    .stTabs [data-baseweb="tab"] {{
-        background-color: transparent;
-        border-radius: 10px;
-        color: #94a3b8;
+        border-radius: 6px;
         font-weight: 600;
-        transition: all 0.3s ease;
-    }}
-    .stTabs [aria-selected="true"] {{
-        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        width: 100%;
     }}
     </style>
 """, unsafe_allow_html=True)
 
-# Clean Localized UI Dictionary (English, Hindi, Punjabi)
+# Clean Localized UI Dictionary
 ui_texts = {
     "English": {
         "title": "🤖 SahayakAI: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
-        "font_label": "🔤 Accessibility: Font Size",
+        "font_label": "🔤 Font Size (Accessibility)",
         "api_label": "🔑 Enter Gemini API Key",
         "api_warn": "⚠️ Please enter your Gemini API Key in the sidebar to begin.",
         "api_tip": "💡 Get a free key instantly from Google AI Studio.",
@@ -114,8 +47,8 @@ ui_texts = {
     "Hindi (हिंदी)": {
         "title": "🤖 सहायक-AI: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
-        "font_label": "🔤 दृश्यता: फ़ॉन्ट आकार नियंत्रण",
-        "api_label": "🔑 जेमिनी एपीआई कुंजी (API Key) दर्ज करें",
+        "font_label": "🔤 फ़ॉन्ट आकार (फ़ॉन्ट साइज़)",
+        "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
         "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी जेमिनी एपीआई कुंजी दर्ज करें।",
         "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
         "tab1": "💬 टेक्स्ट समाधान",
@@ -129,7 +62,7 @@ ui_texts = {
     "Punjabi (ਪੰਜਾਬੀ)": {
         "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
-        "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
+        "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ (Font Size)",
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
         "api_warn": "⚠️ ਸ਼ुरू करने के लिए अपनी API कुंजी दर्ज करो।",
         "api_tip": "💡 Google AI Studio से मुफ्त की प्राप्त करें।",
@@ -153,26 +86,23 @@ selected_lang = st.sidebar.selectbox(
 
 current_ui = ui_texts.get(selected_lang, ui_texts["English"])
 
-# 3D Glassmorphism Font Resizer Section in Sidebar
+# Font Resizer Section in Sidebar
 st.sidebar.markdown(f"**{current_ui['font_label']}**")
-with st.sidebar.container():
-    st.markdown('<div class="font-control-card">', unsafe_allow_html=True)
-    f_col1, f_col2, f_col3 = st.columns(3)
-    with f_col1:
-        if st.button("➖ A-"):
-            if st.session_state.font_size > 12:
-                st.session_state.font_size -= 2
-                st.rerun()
-    with f_col2:
-        if st.button("🔄 Norm"):
-            st.session_state.font_size = 16
+f_col1, f_col2, f_col3 = st.sidebar.columns(3)
+with f_col1:
+    if st.button("➖ A-"):
+        if st.session_state.font_size > 10:
+            st.session_state.font_size -= 2
             st.rerun()
-    with f_col3:
-        if st.button("➕ A+"):
-            if st.session_state.font_size < 26:
-                st.session_state.font_size += 2
-                st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+with f_col2:
+    if st.button("🔄 14px"):
+        st.session_state.font_size = 14
+        st.rerun()
+with f_col3:
+    if st.button("➕ A+"):
+        if st.session_state.font_size < 24:
+            st.session_state.font_size += 2
+            st.rerun()
 
 st.sidebar.write(f"Current Size: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
