@@ -13,56 +13,55 @@ st.set_page_config(
 if "font_size" not in st.session_state:
     st.session_state.font_size = 14
 
-# Clean High-Contrast CSS Styling (Readable & Clean)
+# Clean Professional Theme with 3D Button Animations & Hover Effects
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px !important;
-        color: #1e293b;
     }}
     
-    /* Light Clean Background */
+    /* Clean Dark Theme */
     .stApp {{
-        background-color: #f8fafc;
+        background-color: #0f172a;
+        color: #ffffff;
     }}
 
-    /* Sidebar Clean Layout */
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {{
-        background-color: #ffffff;
-        border-right: 1px solid #e2e8f0;
+        background-color: #1e293b;
+        border-right: 1px solid #334155;
+    }}
+    section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] .stMarkdown {{
+        color: #f8fafc !important;
     }}
 
-    /* Professional Button Styling */
+    /* 3D Animated Buttons with Smooth Hover Effect */
     .stButton>button {{
-        background-color: #4f46e5;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
         color: white;
         border: none;
         border-radius: 8px;
         font-weight: 600;
         padding: 0.5rem 1rem;
         width: 100%;
-        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }}
     .stButton>button:hover {{
-        background-color: #4338ca;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+        background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
     }}
-
-    /* Accessible Card Container */
-    .control-card {{
-        background-color: #f1f5f9;
-        border: 1px solid #cbd5e1;
-        padding: 12px;
-        border-radius: 10px;
-        margin-bottom: 12px;
+    .stButton>button:active {{
+        transform: translateY(1px);
     }}
     </style>
 """, unsafe_allow_html=True)
 
-# Fully Localized UI Dictionary (100% Strings Dynamic)
+# Fully Localized UI Dictionary
 ui_texts = {
     "English": {
         "sidebar_header": "⚙️ Controls & Settings",
-        "lang_label": "🌐 Output & UI Language",
         "title": "🤖 SahayakAI: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
         "font_label": "🔤 Accessibility: Font Size",
@@ -80,11 +79,10 @@ ui_texts = {
     },
     "Hindi (हिंदी)": {
         "sidebar_header": "⚙️ नियंत्रण और सेटिंग्स",
-        "lang_label": "🌐 आउटपुट और यूआई भाषा",
         "title": "🤖 सहायक-AI: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
         "font_label": "🔤 दृश्यता: फ़ॉन्ट आकार",
-        "current_size": "वर्तमान फ़ॉन्ट आकार",
+        "current_size": "वर्तमान आकार",
         "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
         "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी जेमिनी एपीआई कुंजी दर्ज करें।",
         "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
@@ -98,7 +96,6 @@ ui_texts = {
     },
     "Punjabi (ਪੰਜਾਬੀ)": {
         "sidebar_header": "⚙️ ਕੰਟਰੋਲ ਅਤੇ ਸੈਟਿੰਗਾਂ",
-        "lang_label": "🌐 ਆਉਟਪੁੱਟ ਅਤੇ ਯੂ.ਆਈ ਭਾਸ਼ਾ",
         "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
         "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
@@ -108,7 +105,7 @@ ui_texts = {
         "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
         "tab2": "🎙️ ਆਵਾਜ਼ ਸਹਾਇਕ",
-        "tab3": "🖼️ ਤਸਵੀਰ ਵਿਸ਼ਲੇਸ਼ਕ",
+        "tab3": "🖼️ ਤਸਵੀर ਵਿਸ਼ਲੇਸ਼ਕ",
         "t1_sub": "ਆਪਣੀ ਸਮੱਸਿਆ ਜਾਂ ਵਿਚਾਰ ਇੱਥੇ ਲਿਖੋ:",
         "t1_ph": "ਆਪਣਾ ਸਵਾਲ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...",
         "t1_btn": "ਹੱਲ ਪ੍ਰਾਪਤ ਕਰੋ 🚀",
@@ -116,46 +113,43 @@ ui_texts = {
     }
 }
 
-# 1. Language Selection (First element in Sidebar)
-selected_lang = st.sidebar.selectbox(
+# Language Selection (Clean, no box)
+default_lang_choice = st.sidebar.selectbox(
     "🌐 Select Language / भाषा चुनें", 
     ["English", "Hindi (हिंदी)", "Punjabi (ਪੰਜਾਬੀ)"]
 )
 
 # Fetch current UI text dictionary
-current_ui = ui_texts.get(selected_lang, ui_texts["English"])
+current_ui = ui_texts.get(default_lang_choice, ui_texts["English"])
 
-# 2. Localized Sidebar Header
+# Sidebar Header Localized
 st.sidebar.header(current_ui["sidebar_header"])
 
-# 3. Localized Font Resizer Section
+# Font Resizer Section (Directly rendered without surrounding container box)
 st.sidebar.markdown(f"**{current_ui['font_label']}**")
-with st.sidebar.container():
-    st.markdown('<div class="control-card">', unsafe_allow_html=True)
-    f_col1, f_col2, f_col3 = st.columns(3)
-    with f_col1:
-        if st.button("➖ A-"):
-            if st.session_state.font_size > 10:
-                st.session_state.font_size -= 2
-                st.rerun()
-    with f_col2:
-        if st.button("🔄 14px"):
-            st.session_state.font_size = 14
+f_col1, f_col2, f_col3 = st.sidebar.columns(3)
+with f_col1:
+    if st.button("➖ A-"):
+        if st.session_state.font_size > 10:
+            st.session_state.font_size -= 2
             st.rerun()
-    with f_col3:
-        if st.button("➕ A+"):
-            if st.session_state.font_size < 24:
-                st.session_state.font_size += 2
-                st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+with f_col2:
+    if st.button("🔄 14px"):
+        st.session_state.font_size = 14
+        st.rerun()
+with f_col3:
+    if st.button("➕ A+"):
+        if st.session_state.font_size < 24:
+            st.session_state.font_size += 2
+            st.rerun()
 
 st.sidebar.write(f"{current_ui['current_size']}: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
 
-# 4. Localized API Key Input
+# API Key Input (Clean, no box)
 api_key = st.sidebar.text_input(current_ui['api_label'], type="password")
 
-# Main Header
+# Main Header Localized
 st.title(current_ui["title"])
 st.caption(current_ui["caption"])
 
@@ -179,7 +173,7 @@ else:
                 if user_prompt.strip():
                     with st.spinner("Generating..."):
                         try:
-                            prompt = f"{user_prompt}\n\nProvide a natural, professional response strictly in {selected_lang} language."
+                            prompt = f"{user_prompt}\n\nProvide a natural, professional response strictly in {default_lang_choice} language."
                             response = model.generate_content(prompt)
                             st.success(current_ui["success"])
                             st.markdown("### Result / परिणाम:")
@@ -200,7 +194,7 @@ else:
                         try:
                             audio_bytes = audio_file.read()
                             audio_data = {"mime_type": audio_file.type, "data": audio_bytes}
-                            response = model.generate_content([f"Analyze this audio and respond naturally in {selected_lang}", audio_data])
+                            response = model.generate_content([f"Analyze this audio and respond naturally in {default_lang_choice}", audio_data])
                             st.success(current_ui["success"])
                             st.write(response.text)
                         except Exception as e:
@@ -218,7 +212,7 @@ else:
                 if st.button("Analyze Image 🔍", type="primary"):
                     with st.spinner("Analyzing..."):
                         try:
-                            response = model.generate_content([f"{img_prompt}. Respond naturally in {selected_lang}.", image])
+                            response = model.generate_content([f"{img_prompt}. Respond naturally in {default_lang_choice}.", image])
                             st.success(current_ui["success"])
                             st.write(response.text)
                         except Exception as e:
