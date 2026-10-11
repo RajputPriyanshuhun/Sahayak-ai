@@ -3,7 +3,7 @@ import google.generativeai as genai
 from PIL import Image
 
 st.set_page_config(
-    page_title="SahayakAI - Multilingual Assistant", 
+    page_title="SahayakAI1 - Multilingual Assistant", 
     page_icon="🤖", 
     layout="centered"
 )
