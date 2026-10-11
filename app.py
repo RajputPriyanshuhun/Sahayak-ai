@@ -22,6 +22,7 @@ st.markdown(f"""
         color: #ffffff !important;
     }}
 
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
         border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -31,11 +32,21 @@ st.markdown(f"""
         font-weight: 500;
     }}
 
-    /* Text Area aur Input Box ka text white aur background dark set karne ke liye */
+    /* Force all Main Headers, Subheaders, Labels, and Text to Pure White */
+    h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stSubheader, .stCaption {{
+        color: #ffffff !important;
+    }}
+
+    /* Text Area, Text Input, and File Uploader styling */
     .stTextArea textarea, .stTextInput input {{
         color: #ffffff !important;
         background-color: #1e293b !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }}
+
+    /* File uploader label and text fix */
+    [data-testid="stFileUploader"] section div {{
+        color: #ffffff !important;
     }}
 
     .stAlert {{
