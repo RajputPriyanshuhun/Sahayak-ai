@@ -13,41 +13,102 @@ st.set_page_config(
 if "font_size" not in st.session_state:
     st.session_state.font_size = 16
 
-# Clean & Professional CSS (No Lag)
+# Professional CSS Styling
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px;
     }}
     .stButton>button {{
+        border-radius: 8px;
+        font-weight: 600;
         width: 100%;
-        border-radius: 6px;
-        font-weight: bold;
     }}
     </style>
 """, unsafe_allow_html=True)
 
-# App Title & Header
-st.title("🤖 SahayakAI: Multimodal Assistant")
-st.caption("Professional, Fast & Accessible AI Powered by Gemini")
+# Multilingual UI Dictionary for complete localization
+ui_texts = {
+    "English": {
+        "title": "🤖 SahayakAI: Multilingual Assistant",
+        "caption": "Professional, Fast & Accessible AI Powered by Gemini",
+        "font_label": "🔤 Font Size (Accessibility)",
+        "api_label": "🔑 Enter Gemini API Key",
+        "tab1": "💬 Text Solver",
+        "tab2": "🎙️ Voice Helper",
+        "tab3": "🖼️ Image Analyzer",
+        "t1_sub": "Describe your problem or idea:",
+        "t1_ph": "Type your question or issue here...",
+        "t1_btn": "Generate Solution 🚀",
+        "success": "Solution Ready!"
+    },
+    "Hindi (हिंदी)": {
+        "title": "🤖 सहायक-AI: बहुभाषी सहायक",
+        "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
+        "font_label": "🔤 फ़ॉन्ट साइज़ (अक्षर बड़ा/छोटा करें)",
+        "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
+        "tab1": "💬 टेक्स्ट समाधान",
+        "tab2": "🎙️ आवाज़ सहायक",
+        "tab3": "🖼️ चित्र विश्लेषक",
+        "t1_sub": "अपनी समस्या या विचार यहाँ लिखें:",
+        "t1_ph": "अपना प्रश्न या समस्या यहाँ टाइप करें...",
+        "t1_btn": "समाधान प्राप्त करें 🚀",
+        "success": "समाधान तैयार है!"
+    },
+    "Mandayali / Himachali (मंडयाली)": {
+        "title": "🤖 सहायक-AI: मंडयाली ते स्थानीय सहायक",
+        "caption": "तुहारी अपनी भाषा मां हर समस्या दा हल",
+        "font_label": "🔤 अक्षर बड़ा-छोटा करो (Font Size)",
+        "api_label": "🔑 Gemini API Key पायो",
+        "tab1": "💬 लिखकरी समस्या हल करो",
+        "tab2": "🎙️ बोलकरी सुणो",
+        "tab3": "🖼️ फोटो विश्लेषक",
+        "t1_sub": "अपनी समस्या या विचार इथे लिखो:",
+        "t1_ph": "अपना सवाल या समस्या इथे लिखो...",
+        "t1_btn": "समाधान दिखाओ 🚀",
+        "success": "समाधान तैयार होई गेया!"
+    },
+    "Punjabi (ਪੰਜਾਬੀ)": {
+        "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
+        "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
+        "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ (Font Size)",
+        "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
+        "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
+        "tab2": "🎙️ ਆਵਾਜ਼ ਸਹਾਇਕ",
+        "tab3": "🖼️ ਤਸਵੀਰ ਵਿਸ਼ਲੇਸ਼ਕ",
+        "t1_sub": "ਆਪਣੀ ਸਮੱਸਿਆ ਜਾਂ ਵਿਚਾਰ ਇੱਥੇ ਲਿਖੋ:",
+        "t1_ph": "ਆਪਣਾ ਸਵਾਲ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...",
+        "t1_btn": "ਹੱਲ ਪ੍ਰਾਪਤ ਕਰੋ 🚀",
+        "success": "ਹੱਲ ਤਿਆਰ ਹੈ!"
+    }
+}
 
-# Sidebar Controls (Clean & Fast)
+# Sidebar Controls & Settings
 st.sidebar.header("⚙️ Controls & Settings")
 
-# Font Size Accessibility Control
-st.sidebar.subheader("🔤 Font Size (Accessibility)")
-col1, col2, col3 = st.sidebar.columns(3)
-with col1:
-    if st.button("A-"):
+# Language Selection
+selected_lang = st.sidebar.selectbox(
+    "🌐 Output & UI Language", 
+    ["English", "Hindi (हिंदी)", "Mandayali / Himachali (मंडयाली)", "Punjabi (ਪੰਜਾਬੀ)"]
+)
+
+# Fetch corresponding UI strings safely
+current_ui = ui_texts.get(selected_lang, ui_texts["English"])
+
+# Professional Font Size Accessibility Controls
+st.sidebar.markdown(f"### {current_ui['font_label']}")
+f_col1, f_col2, f_col3 = st.sidebar.columns(3)
+with f_col1:
+    if st.button("➖ A-"):
         if st.session_state.font_size > 12:
             st.session_state.font_size -= 2
             st.rerun()
-with col2:
-    if st.button("Normal"):
+with f_col2:
+    if st.button("🔄 Normal"):
         st.session_state.font_size = 16
         st.rerun()
-with col3:
-    if st.button("A+"):
+with f_col3:
+    if st.button("➕ A+"):
         if st.session_state.font_size < 24:
             st.session_state.font_size += 2
             st.rerun()
@@ -55,14 +116,12 @@ with col3:
 st.sidebar.write(f"Size: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
 
-# Language Selection for Output
-target_lang = st.sidebar.selectbox(
-    "🌐 Output Language", 
-    ["English", "Hindi (हिंदी)", "Mandayali / Himachali (मंडयाली)", "Punjabi (ਪੰਜਾਬੀ)", "Bengali (বাংলা)"]
-)
+# API Key Input
+api_key = st.sidebar.text_input(current_ui['api_label'], type="password")
 
-st.sidebar.markdown("---")
-api_key = st.sidebar.text_input("🔑 Enter Gemini API Key", type="password")
+# Main Header
+st.title(current_ui["title"])
+st.caption(current_ui["caption"])
 
 if not api_key:
     st.warning("⚠️ Please enter your Gemini API Key in the sidebar to begin.")
@@ -72,22 +131,22 @@ else:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-3.8-flash")
 
-        # Tabs for different features
-        tabs = st.tabs(["💬 Text Solver", "🎙️ Voice Helper", "🖼️ Image Analyzer"])
+        # Localized Tabs
+        tabs = st.tabs([current_ui["tab1"], current_ui["tab2"], current_ui["tab3"]])
 
         # Tab 1: Text Solver
         with tabs[0]:
-            st.subheader("Describe your problem or idea:")
-            user_prompt = st.text_area("Type your question or issue here...", height=100)
+            st.subheader(current_ui["t1_sub"])
+            user_prompt = st.text_area("", placeholder=current_ui["t1_ph"], height=100)
             
-            if st.button("Generate Solution 🚀", type="primary"):
+            if st.button(current_ui["t1_btn"], type="primary"):
                 if user_prompt.strip():
-                    with st.spinner("AI is generating solution..."):
+                    with st.spinner("Generating..."):
                         try:
-                            prompt = f"{user_prompt}\n\nProvide the complete response in {target_lang} language."
+                            prompt = f"{user_prompt}\n\nProvide the complete response strictly in {selected_lang} language."
                             response = model.generate_content(prompt)
-                            st.success("Solution Ready!")
-                            st.markdown("### Result:")
+                            st.success(current_ui["success"])
+                            st.markdown("### Result / परिणाम:")
                             st.write(response.text)
                         except Exception as e:
                             st.error(f"Error: {e}")
@@ -96,18 +155,17 @@ else:
 
         # Tab 2: Voice Helper
         with tabs[1]:
-            st.subheader("🎙️ Audio / Voice Assistant")
+            st.subheader("🎙️ Voice & Audio Assistant")
             audio_file = st.file_uploader("Upload audio recording (WAV, MP3)", type=["wav", "mp3", "m4a"])
-            
             if audio_file is not None:
                 st.audio(audio_file)
                 if st.button("Analyze Audio 🚀", type="primary"):
-                    with st.spinner("Processing audio..."):
+                    with st.spinner("Processing..."):
                         try:
                             audio_bytes = audio_file.read()
                             audio_data = {"mime_type": audio_file.type, "data": audio_bytes}
-                            response = model.generate_content([f"Analyze this audio and respond in {target_lang}", audio_data])
-                            st.success("Audio Analyzed!")
+                            response = model.generate_content([f"Analyze this audio and respond in {selected_lang}", audio_data])
+                            st.success(current_ui["success"])
                             st.write(response.text)
                         except Exception as e:
                             st.error(f"Error: {e}")
@@ -121,15 +179,14 @@ else:
             if uploaded_file is not None:
                 image = Image.open(uploaded_file)
                 st.image(image, use_column_width=True)
-                
                 if st.button("Analyze Image 🔍", type="primary"):
-                    with st.spinner("Analyzing image..."):
+                    with st.spinner("Analyzing..."):
                         try:
-                            response = model.generate_content([f"{img_prompt}. Respond in {target_lang}.", image])
-                            st.success("Analysis Complete!")
+                            response = model.generate_content([f"{img_prompt}. Respond in {selected_lang}.", image])
+                            st.success(current_ui["success"])
                             st.write(response.text)
                         except Exception as e:
                             st.error(f"Error: {e}")
 
     except Exception as err:
-        st.error(f"Configuration Error: {err}")
+        st.error(f"Config Error: {err}")
