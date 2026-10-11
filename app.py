@@ -4,106 +4,69 @@ from PIL import Image
 
 # Page Configuration
 st.set_page_config(
-    page_title="SahayakAI - Multilingual Problem Solver", 
+    page_title="SahayakAI - Multilingual Assistant", 
     page_icon="🤖", 
     layout="centered"
 )
 
-# Initialize Session State for Font Size to 14px default
+# Baseline Default Font Size 14px
 if "font_size" not in st.session_state:
     st.session_state.font_size = 14
 
-# Stunning 3D Neon Glassmorphism & Smooth Animation CSS
+# Clean High-Contrast CSS Styling (Readable & Clean)
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
-        font-size: {st.session_state.font_size}px;
+        font-size: {st.session_state.font_size}px !important;
+        color: #1e293b;
     }}
     
-    /* Dark Gradient Background */
+    /* Light Clean Background */
     .stApp {{
-        background: linear-gradient(135deg, #090d16 0%, #171f33 50%, #090d16 100%);
-        color: #f1f5f9;
+        background-color: #f8fafc;
     }}
 
-    /* Sidebar Styling with Glow */
+    /* Sidebar Clean Layout */
     section[data-testid="stSidebar"] {{
-        background: linear-gradient(180deg, #131b2e 0%, #0b101b 100%);
-        border-right: 1px solid rgba(99, 102, 241, 0.2);
+        background-color: #ffffff;
+        border-right: 1px solid #e2e8f0;
     }}
 
-    /* 3D Animated Gradient Buttons */
+    /* Professional Button Styling */
     .stButton>button {{
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        background-color: #4f46e5;
         color: white;
         border: none;
-        border-radius: 12px;
-        font-weight: 700;
-        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
         width: 100%;
-        box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.5);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.2s ease;
     }}
     .stButton>button:hover {{
-        transform: translateY(-4px) scale(1.03);
-        box-shadow: 0 14px 28px -4px rgba(168, 85, 247, 0.7);
-        background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
-    }}
-    .stButton>button:active {{
-        transform: translateY(1px);
+        background-color: #4338ca;
     }}
 
-    /* Glassmorphism Cards for Controls */
-    .glass-card {{
-        background: rgba(255, 255, 255, 0.04);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 16px;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        margin-bottom: 15px;
-    }}
-
-    /* Inputs Styling with Glow on Focus */
-    .stTextInput>div>div>input, .stTextArea>div>div>textarea, .stSelectbox>div>div>div {{
-        background-color: rgba(255, 255, 255, 0.06) !important;
-        color: #f8fafc !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        transition: all 0.3s ease;
-    }}
-
-    /* Sleek Tab Navigation Styling */
-    .stTabs [data-baseweb="tab-list"] {{
-        gap: 10px;
-        background-color: rgba(255, 255, 255, 0.03);
-        padding: 8px;
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }}
-    .stTabs [data-baseweb="tab"] {{
-        background-color: transparent;
+    /* Accessible Card Container */
+    .control-card {{
+        background-color: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        padding: 12px;
         border-radius: 10px;
-        color: #94a3b8;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }}
-    .stTabs [aria-selected="true"] {{
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
-        color: white !important;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
+        margin-bottom: 12px;
     }}
     </style>
 """, unsafe_allow_html=True)
 
-# Fully Localized UI Dictionary
+# Fully Localized UI Dictionary (100% Strings Dynamic)
 ui_texts = {
     "English": {
         "sidebar_header": "⚙️ Controls & Settings",
         "lang_label": "🌐 Output & UI Language",
         "title": "🤖 SahayakAI: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
-        "font_label": "🔤 Font Size (Accessibility)",
+        "font_label": "🔤 Accessibility: Font Size",
+        "current_size": "Current Size",
         "api_label": "🔑 Enter Gemini API Key",
         "api_warn": "⚠️ Please enter your Gemini API Key in the sidebar to begin.",
         "api_tip": "💡 Get a free key instantly from Google AI Studio.",
@@ -120,7 +83,8 @@ ui_texts = {
         "lang_label": "🌐 आउटपुट और यूआई भाषा",
         "title": "🤖 सहायक-AI: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
-        "font_label": "🔤 फ़ॉन्ट आकार (अक्षर बड़ा/छोटा करें)",
+        "font_label": "🔤 दृश्यता: फ़ॉन्ट आकार",
+        "current_size": "वर्तमान फ़ॉन्ट आकार",
         "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
         "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी जेमिनी एपीआई कुंजी दर्ज करें।",
         "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
@@ -138,6 +102,7 @@ ui_texts = {
         "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
         "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
+        "current_size": "ਮੌਜੂਦਾ ਆਕਾਰ",
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
         "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
         "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
@@ -151,22 +116,22 @@ ui_texts = {
     }
 }
 
-# Sidebar Language Selection First
+# 1. Language Selection (First element in Sidebar)
 selected_lang = st.sidebar.selectbox(
-    "🌐 Output & UI Language", 
+    "🌐 Select Language / भाषा चुनें", 
     ["English", "Hindi (हिंदी)", "Punjabi (ਪੰਜਾਬੀ)"]
 )
 
-# Fetch corresponding UI strings dynamically
+# Fetch current UI text dictionary
 current_ui = ui_texts.get(selected_lang, ui_texts["English"])
 
-# Sidebar Header Localized
+# 2. Localized Sidebar Header
 st.sidebar.header(current_ui["sidebar_header"])
 
-# 3D Glassmorphism Font Resizer Section in Sidebar
+# 3. Localized Font Resizer Section
 st.sidebar.markdown(f"**{current_ui['font_label']}**")
 with st.sidebar.container():
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.markdown('<div class="control-card">', unsafe_allow_html=True)
     f_col1, f_col2, f_col3 = st.columns(3)
     with f_col1:
         if st.button("➖ A-"):
@@ -184,12 +149,13 @@ with st.sidebar.container():
                 st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.sidebar.write(f"Current Size: **{st.session_state.font_size}px**")
+st.sidebar.write(f"{current_ui['current_size']}: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
 
+# 4. Localized API Key Input
 api_key = st.sidebar.text_input(current_ui['api_label'], type="password")
 
-# Main App Header Localized
+# Main Header
 st.title(current_ui["title"])
 st.caption(current_ui["caption"])
 
