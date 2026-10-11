@@ -18,8 +18,8 @@ else:
     try:
         genai.configure(api_key=api_key)
         
-        # Latest supported models (Updated to avoid 404 Error)
-     model_name = st.sidebar.selectbox("Select AI Model", ["gemini-3.8-flash", "gemini-flash"])
+        # Updated working models for latest Gemini API
+        model_name = st.sidebar.selectbox("Select AI Model", ["gemini-3.8-flash", "gemini-flash"])
         model = genai.GenerativeModel(model_name)
 
         tabs = st.tabs(["💬 Text & Problem Solver", "🖼️ Image & Document Analyzer"])
