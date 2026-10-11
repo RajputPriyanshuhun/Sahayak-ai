@@ -10,6 +10,12 @@ st.set_page_config(
 
 if "font_size" not in st.session_state:
     st.session_state.font_size = 14
+if "api_key" not in st.session_state:
+    st.session_state.api_key = ""
+if "user_prompt" not in st.session_state:
+    st.session_state.user_prompt = ""
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = 0
 
 st.markdown(f"""
     <style>
@@ -22,7 +28,6 @@ st.markdown(f"""
         color: #ffffff !important;
     }}
 
-    /* Sidebar Styling */
     section[data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
         border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -32,19 +37,16 @@ st.markdown(f"""
         font-weight: 500;
     }}
 
-    /* Force all Main Headers, Subheaders, Labels, and Text to Pure White */
     h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stSubheader, .stCaption {{
         color: #ffffff !important;
     }}
 
-    /* Text Area, Text Input, and File Uploader styling */
     .stTextArea textarea, .stTextInput input {{
         color: #ffffff !important;
         background-color: #1e293b !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }}
 
-    /* File uploader label and text fix */
     [data-testid="stFileUploader"] section div {{
         color: #ffffff !important;
     }}
@@ -85,7 +87,8 @@ ui_texts = {
         "api_label": "🔑 Enter Gemini API Key",
         "api_connected": "API Connected 🟢",
         "api_required": "API Key Required 🔴",
-        "api_warn": "⚠️ Please enter your Gemini API Key in the sidebar to begin.",
+        "api_invalid": "Invalid API Key 🔴",
+        "api_warn": "⚠️ Please enter your valid Gemini API Key in the sidebar to begin.",
         "api_tip": "💡 Get a free key instantly from Google AI Studio.",
         "tab1": "💬 Text Solver",
         "tab2": "🎙️ Voice Helper",
@@ -106,7 +109,8 @@ ui_texts = {
         "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
         "api_connected": "एपीआई कनेक्टेड 🟢",
         "api_required": "एपीआई कुंजी आवश्यक है 🔴",
-        "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी जेमिनी एपीआई कुंजी दर्ज करें।",
+        "api_invalid": "अमान्य एपीआई कुंजी 🔴",
+        "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी वैध जेमिनी एपीआई कुंजी दर्ज करें।",
         "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
         "tab1": "💬 टेक्स्ट समाधान",
         "tab2": "🎙️ आवाज़ सहायक",
@@ -127,7 +131,8 @@ ui_texts = {
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
         "api_connected": "API ਕਨੈקט ਹੋ ਗਿਆ 🟢",
         "api_required": "API ਕੁੰਜੀ ਜ਼ਰੂਰੀ ਹੈ 🔴",
-        "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
+        "api_invalid": "ਗਲਤ API ਕੁੰਜੀ 🔴",
+        "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਸਹੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
         "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
         "tab2": "🎙️ ਆਵਾਜ਼ ਸਹਾਇਕ",
@@ -140,6 +145,14 @@ ui_texts = {
         "chips": ["🌾 ਫਸਲ ਦੀ ਬਿਮਾਰੀ ਦਾ ਹੱਲ", "📜 ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦੀ ਜਾਣਕਾਰੀ", "⚡ ਊਰਜਾ ਬਚਾਉਣ ਦੇ ਤਰੀਕੇ"]
     }
 }
+
+# Sidebar Top Logo
+st.sidebar.markdown("""
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+        <div style="background: linear-gradient(135deg, #6366f1, #a855f7); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 12px rgba(99,102,241,0.6);">🤖</div>
+        <span style="font-size: 20px; font-weight: 800; color: #ffffff !important;">SahayakAI</span>
+    </div>
+""", unsafe_allow_html=True)
 
 default_lang_choice = st.sidebar.selectbox(
     "🌐 Select Language / भाषा चुनें", 
@@ -170,30 +183,45 @@ with f_col3:
 st.sidebar.write(f"{current_ui['current_size']}: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
 
-api_key = st.sidebar.text_input(current_ui['api_label'], type="password")
+api_key_input = st.sidebar.text_input(current_ui['api_label'], type="password", value=st.session_state.api_key)
+st.session_state.api_key = api_key_input
 
-if api_key:
-    st.sidebar.success(current_ui['api_connected'])
+cleaned_key = st.session_state.api_key.strip()
+is_valid_api = bool(cleaned_key.startswith("AIza") and len(cleaned_key) > 20)
+
+if cleaned_key:
+    if is_valid_api:
+        st.sidebar.success(current_ui['api_connected'])
+    else:
+        st.sidebar.error(current_ui['api_invalid'])
 else:
     st.sidebar.error(current_ui['api_required'])
 
 st.title(current_ui["title"])
 st.caption(current_ui["caption"])
 
-if not api_key:
+if not cleaned_key or not is_valid_api:
     st.warning(current_ui["api_warn"])
     st.info(current_ui["api_tip"])
 else:
     try:
-        genai.configure(api_key=api_key)
+        genai.configure(api_key=cleaned_key)
         model = genai.GenerativeModel("gemini-3.8-flash")
 
-        if "user_prompt" not in st.session_state:
-            st.session_state.user_prompt = ""
+        t_col1, t_col2, t_col3 = st.columns(3)
+        with t_col1:
+            if st.button(current_ui["tab1"], use_container_width=True):
+                st.session_state.active_tab = 0
+        with t_col2:
+            if st.button(current_ui["tab2"], use_container_width=True):
+                st.session_state.active_tab = 1
+        with t_col3:
+            if st.button(current_ui["tab3"], use_container_width=True):
+                st.session_state.active_tab = 2
 
-        tabs = st.tabs([current_ui["tab1"], current_ui["tab2"], current_ui["tab3"]])
+        st.markdown("---")
 
-        with tabs[0]:
+        if st.session_state.active_tab == 0:
             st.subheader(current_ui["t1_sub"])
             
             st.markdown(f"**{current_ui['chips_title']}**")
@@ -224,8 +252,8 @@ else:
                 else:
                     st.warning("Please type something first!")
 
-        with tabs[1]:
-            st.subheader("🎙️ Voice & Audio Assistant")
+        elif st.session_state.active_tab == 1:
+            st.subheader(current_ui["tab2"])
             audio_file = st.file_uploader("Upload audio recording (WAV, MP3)", type=["wav", "mp3", "m4a"])
             if audio_file is not None:
                 st.audio(audio_file)
@@ -240,14 +268,14 @@ else:
                         except Exception as e:
                             st.error(f"Error: {e}")
 
-        with tabs[2]:
-            st.subheader("🖼️ Image & Document Analyzer")
+        elif st.session_state.active_tab == 2:
+            st.subheader(current_ui["tab3"])
             uploaded_file = st.file_uploader("Upload image...", type=["jpg", "jpeg", "png"])
             img_prompt = st.text_input("What should AI do with this image?", "Explain this image and give solutions.")
 
             if uploaded_file is not None:
                 image = Image.open(uploaded_file)
-                st.image(image, use_column_width=True)
+                st.image(image, use_container_width=True)
                 if st.button("Analyze Image 🔍", type="primary"):
                     with st.spinner("Analyzing..."):
                         try:
