@@ -2,40 +2,43 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# Page Configuration
 st.set_page_config(
     page_title="SahayakAI - Multilingual Assistant", 
     page_icon="🤖", 
     layout="centered"
 )
 
-# Baseline Default Font Size 14px
 if "font_size" not in st.session_state:
     st.session_state.font_size = 14
 
-# Vibrant Color Mix & Smooth 3D Button Animations CSS
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
         font-size: {st.session_state.font_size}px !important;
     }}
     
-    /* Vibrant Professional Gradient Theme */
     .stApp {{
         background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-        color: #f8fafc;
+        color: #ffffff !important;
     }}
 
-    /* Sidebar Styling */
     section[data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
         border-right: 1px solid rgba(255, 255, 255, 0.1);
     }}
-    section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] .stMarkdown {{
-        color: #f8fafc !important;
+    section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] .stMarkdown, section[data-testid="stSidebar"] span {{
+        color: #ffffff !important;
+        font-weight: 500;
     }}
 
-    /* Vibrant 3D Animated Buttons with Smooth Hover Effect */
+    /* Neon Glow for Warning & Info boxes */
+    .stAlert {{
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(99, 102, 241, 0.5) !important;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        border-radius: 12px;
+    }}
+
     .stButton>button {{
         background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
         color: white;
@@ -52,22 +55,19 @@ st.markdown(f"""
         box-shadow: 0 12px 24px -4px rgba(168, 85, 247, 0.7);
         background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
     }}
-    .stButton>button:active {{
-        transform: translateY(1px);
-    }}
     </style>
 """, unsafe_allow_html=True)
 
-# Fully Localized UI Dictionary (Including Language Selectbox Label)
 ui_texts = {
     "English": {
-        "lang_label": "🌐 Select Language / भाषा चुनें",
         "sidebar_header": "⚙️ Controls & Settings",
         "title": "🤖 SahayakAI: Multilingual Assistant",
         "caption": "Professional, Fast & Accessible AI Powered by Gemini",
         "font_label": "🔤 Accessibility: Font Size",
         "current_size": "Current Size",
         "api_label": "🔑 Enter Gemini API Key",
+        "api_connected": "API Connected 🟢",
+        "api_required": "API Key Required 🔴",
         "api_warn": "⚠️ Please enter your Gemini API Key in the sidebar to begin.",
         "api_tip": "💡 Get a free key instantly from Google AI Studio.",
         "tab1": "💬 Text Solver",
@@ -76,16 +76,19 @@ ui_texts = {
         "t1_sub": "Describe your problem or idea:",
         "t1_ph": "Type your question or issue here...",
         "t1_btn": "Generate Solution 🚀",
-        "success": "Solution Ready!"
+        "success": "Solution Ready!",
+        "chips_title": "💡 Quick Suggestions:",
+        "chips": ["🌾 Crop Disease Solution", "📜 Local Govt Schemes Info", "⚡ Energy Saving Tips"]
     },
     "Hindi (हिंदी)": {
-        "lang_label": "🌐 भाषा चुनें / Select Language",
         "sidebar_header": "⚙️ नियंत्रण और सेटिंग्स",
         "title": "🤖 सहायक-AI: बहुभाषी सहायक",
         "caption": "जेमिनी द्वारा संचालित पेशेवर, तेज़ और सुलभ एआई",
         "font_label": "🔤 दृश्यता: फ़ॉन्ट आकार",
         "current_size": "वर्तमान आकार",
         "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
+        "api_connected": "एपीआई कनेक्टेड 🟢",
+        "api_required": "एपीआई कुंजी आवश्यक है 🔴",
         "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी जेमिनी एपीआई कुंजी दर्ज करें।",
         "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
         "tab1": "💬 टेक्स्ट समाधान",
@@ -94,16 +97,19 @@ ui_texts = {
         "t1_sub": "अपनी समस्या या विचार यहाँ लिखें:",
         "t1_ph": "अपना प्रश्न या स्थानीय समस्या यहाँ टाइप करें...",
         "t1_btn": "समाधान प्राप्त करें 🚀",
-        "success": "समाधान तैयार है!"
+        "success": "समाधान तैयार है!",
+        "chips_title": "💡 त्वरित सुझाव:",
+        "chips": ["🌾 फसल की बीमारी का समाधान", "📜 स्थानीय सरकारी योजना की जानकारी", "⚡ बिजली बचाने के उपाय"]
     },
     "Punjabi (ਪੰਜਾਬੀ)": {
-        "lang_label": "🌐 ਭਾਸ਼ਾ ਚੁנו / Select Language",
         "sidebar_header": "⚙️ ਕੰਟਰੋਲ ਅਤੇ ਸੈਟਿੰਗਾਂ",
         "title": "🤖 ਸਹਾਇਕ-AI: ਬਹੁਭਾਸ਼ੀ ਸਹਾਇਕ",
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
         "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
         "current_size": "ਮੌਜੂਦਾ ਆਕਾਰ",
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
+        "api_connected": "API ਕਨੈקט ਹੋ ਗਿਆ 🟢",
+        "api_required": "API ਕੁੰਜੀ ਜ਼ਰੂਰੀ ਹੈ 🔴",
         "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
         "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
@@ -112,23 +118,21 @@ ui_texts = {
         "t1_sub": "ਆਪਣੀ ਸਮੱਸਿਆ ਜਾਂ ਵਿਚਾਰ ਇੱਥੇ ਲਿਖੋ:",
         "t1_ph": "ਆਪਣਾ ਸਵਾਲ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...",
         "t1_btn": "ਹੱਲ ਪ੍ਰਾਪਤ ਕਰੋ 🚀",
-        "success": "ਹੱਲ ਤਿਆਰ ਹੈ!"
+        "success": "ਹੱਲ ਤਿਆਰ ਹੈ!",
+        "chips_title": "💡 ਤੁਰੰਤ ਸੁਝਾਅ:",
+        "chips": ["🌾 ਫਸਲ ਦੀ ਬਿਮਾਰੀ ਦਾ ਹੱਲ", "📜 ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦੀ ਜਾਣਕਾਰੀ", "⚡ ਊਰਜਾ ਬਚਾਉਣ ਦੇ ਤਰੀਕੇ"]
     }
 }
 
-# First determine default selection to render dynamic language label
 default_lang_choice = st.sidebar.selectbox(
     "🌐 Select Language / भाषा चुनें", 
     ["English", "Hindi (हिंदी)", "Punjabi (ਪੰਜਾਬੀ)"]
 )
 
-# Fetch current UI dictionary
 current_ui = ui_texts.get(default_lang_choice, ui_texts["English"])
 
-# Sidebar Header Localized
-st.sidebar.header(current_ui["sidebar_header"])
+st.sidebar.markdown(f"### {current_ui['sidebar_header']}")
 
-# Font Resizer Section (Clean, no boxes)
 st.sidebar.markdown(f"**{current_ui['font_label']}**")
 f_col1, f_col2, f_col3 = st.sidebar.columns(3)
 with f_col1:
@@ -149,10 +153,13 @@ with f_col3:
 st.sidebar.write(f"{current_ui['current_size']}: **{st.session_state.font_size}px**")
 st.sidebar.markdown("---")
 
-# API Key Input (Clean)
 api_key = st.sidebar.text_input(current_ui['api_label'], type="password")
 
-# Main Header Localized
+if api_key:
+    st.sidebar.success(current_ui['api_connected'])
+else:
+    st.sidebar.error(current_ui['api_required'])
+
 st.title(current_ui["title"])
 st.caption(current_ui["caption"])
 
@@ -164,13 +171,27 @@ else:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-3.8-flash")
 
-        # Localized Tabs
+        if "user_prompt" not in st.session_state:
+            st.session_state.user_prompt = ""
+
         tabs = st.tabs([current_ui["tab1"], current_ui["tab2"], current_ui["tab3"]])
 
-        # Tab 1: Text Solver
         with tabs[0]:
             st.subheader(current_ui["t1_sub"])
-            user_prompt = st.text_area("", placeholder=current_ui["t1_ph"], height=100)
+            
+            st.markdown(f"**{current_ui['chips_title']}**")
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                if st.button(current_ui["chips"][0]):
+                    st.session_state.user_prompt = current_ui["chips"][0]
+            with c2:
+                if st.button(current_ui["chips"][1]):
+                    st.session_state.user_prompt = current_ui["chips"][1]
+            with c3:
+                if st.button(current_ui["chips"][2]):
+                    st.session_state.user_prompt = current_ui["chips"][2]
+
+            user_prompt = st.text_area("", value=st.session_state.user_prompt, placeholder=current_ui["t1_ph"], height=100)
             
             if st.button(current_ui["t1_btn"], type="primary"):
                 if user_prompt.strip():
@@ -186,7 +207,6 @@ else:
                 else:
                     st.warning("Please type something first!")
 
-        # Tab 2: Voice Helper
         with tabs[1]:
             st.subheader("🎙️ Voice & Audio Assistant")
             audio_file = st.file_uploader("Upload audio recording (WAV, MP3)", type=["wav", "mp3", "m4a"])
@@ -203,7 +223,6 @@ else:
                         except Exception as e:
                             st.error(f"Error: {e}")
 
-        # Tab 3: Image Analyzer
         with tabs[2]:
             st.subheader("🖼️ Image & Document Analyzer")
             uploaded_file = st.file_uploader("Upload image...", type=["jpg", "jpeg", "png"])
