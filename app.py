@@ -20,7 +20,7 @@ st.markdown(f"""
         font-size: {st.session_state.font_size}px;
     }}
     
-    /* Gorgeous Dark Gradient Background for High Visibility */
+    /* Dark Gradient Background */
     .stApp {{
         background: linear-gradient(135deg, #090d16 0%, #171f33 50%, #090d16 100%);
         color: #f1f5f9;
@@ -72,10 +72,6 @@ st.markdown(f"""
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         transition: all 0.3s ease;
     }}
-    .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {{
-        border-color: #6366f1 !important;
-        box-shadow: 0 0 12px rgba(99, 102, 241, 0.4) !important;
-    }}
 
     /* Sleek Tab Navigation Styling */
     .stTabs [data-baseweb="tab-list"] {{
@@ -100,7 +96,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# Fully Localized UI Dictionary (No English residue when Hindi/Punjabi is selected)
+# Fully Localized UI Dictionary
 ui_texts = {
     "English": {
         "sidebar_header": "⚙️ Controls & Settings",
@@ -143,8 +139,8 @@ ui_texts = {
         "caption": "ਜੇਮਿਨੀ ਦੁਆਰਾ ਸੰਚਾਲਿਤ ਪੇਸ਼ੇਵਰ ਅਤੇ ਸਰਲ ਏ.ਆਈ",
         "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
-        "api_warn": "⚠️ ਸ਼ुरू करने के लिए अपनी API कुंजी दर्ज करो।",
-        "api_tip": "💡 Google AI Studio से मुफ्त की प्राप्त करें।",
+        "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
+        "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
         "tab2": "🎙️ ਆਵਾਜ਼ ਸਹਾਇਕ",
         "tab3": "🖼️ ਤਸਵੀਰ ਵਿਸ਼ਲੇਸ਼ਕ",
@@ -247,4 +243,20 @@ else:
         # Tab 3: Image Analyzer
         with tabs[2]:
             st.subheader("🖼️ Image & Document Analyzer")
-            uploaded_file = st.file_uploader("Upload image...", type="jpg", "jpeg", "png"]) # Wait, let's fix the syntax tuple here
+            uploaded_file = st.file_uploader("Upload image...", type=["jpg", "jpeg", "png"])
+            img_prompt = st.text_input("What should AI do with this image?", "Explain this image and give solutions.")
+
+            if uploaded_file is not None:
+                image = Image.open(uploaded_file)
+                st.image(image, use_column_width=True)
+                if st.button("Analyze Image 🔍", type="primary"):
+                    with st.spinner("Analyzing..."):
+                        try:
+                            response = model.generate_content([f"{img_prompt}. Respond naturally in {selected_lang}.", image])
+                            st.success(current_ui["success"])
+                            st.write(response.text)
+                        except Exception as e:
+                            st.error(f"Error: {e}")
+
+    except Exception as err:
+        st.error(f"Config Error: {err}")
