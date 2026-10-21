@@ -1,7 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
-import pypdf # Make sure pypdf is in requirements.txt
+import pypdf
 from gtts import gTTS
 import io
 
@@ -93,7 +93,7 @@ ui_texts = {
         "api_label": "🔑 Enter Gemini API Key",
         "api_connected": "API Connected 🟢",
         "api_required": "API Key Required 🔴",
-        "api_invalid": "Invalid API Key 🔴",
+        "api_invalid": "Invalid API Key (Must start with 'AIza') 🔴",
         "api_warn": "⚠️ Please enter your valid Gemini API Key in the sidebar to begin.",
         "api_tip": "💡 Get a free key instantly from Google AI Studio.",
         "tab1": "💬 Text Solver",
@@ -118,7 +118,7 @@ ui_texts = {
         "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
         "api_connected": "एपीआई कनेक्टेड 🟢",
         "api_required": "एपीआई कुंजी आवश्यक है 🔴",
-        "api_invalid": "अमान्य एपीआई कुंजी 🔴",
+        "api_invalid": "अमान्य एपीआई कुंजी ('AIza' से शुरू होनी चाहिए) 🔴",
         "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी वैध जेमिनी एपीआई कुंजी दर्ज करें।",
         "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
         "tab1": "💬 टेक्स्ट समाधान",
@@ -143,7 +143,7 @@ ui_texts = {
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
         "api_connected": "API ਕਨੈਕਟ ਹੋ ਗਿਆ 🟢",
         "api_required": "API ਕੁੰਜੀ ਜ਼ਰੂਰੀ ਹੈ 🔴",
-        "api_invalid": "ਗਲਤ API ਕੁੰਜੀ 🔴",
+        "api_invalid": "ਗਲਤ API ਕੁੰਜੀ ('AIza' ਨਾਲ ਸ਼ुरू ਹੋਵੇ) 🔴",
         "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਸਹੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
         "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
@@ -194,7 +194,9 @@ api_key_input = st.sidebar.text_input(current_ui['api_label'], type="password", 
 st.session_state.api_key = api_key_input
 
 cleaned_key = st.session_state.api_key.strip()
-is_valid_api = bool(len(cleaned_key) > 10)
+
+# STRICT API KEY VALIDATION: Must start with 'AIza' and be longer than 20 chars
+is_valid_api = bool(cleaned_key.startswith("AIza") and len(cleaned_key) > 20)
 
 if cleaned_key:
     if is_valid_api:
@@ -240,10 +242,9 @@ else:
 
         st.markdown("---")
 
-        # Function for Text-to-Speech Output
         def play_text_audio(text, lang_code='hi'):
             try:
-                tts = gTTS(text=text[:300], lang=lang_code) # Limiting 300 chars for quick playback
+                tts = gTTS(text=text[:300], lang=lang_code)
                 fp = io.BytesIO()
                 tts.write_to_fp(fp)
                 fp.seek(0)
@@ -255,7 +256,6 @@ else:
         if st.session_state.active_tab == 0:
             st.subheader(current_ui["t1_sub"])
             
-            # Quick Action Chips (4 Items)
             st.markdown(f"**{current_ui['chips_title']}**")
             c1, c2, c3, c4 = st.columns(4)
             with c1:
@@ -271,7 +271,6 @@ else:
                 if st.button(current_ui["chips"][3]):
                     st.session_state.user_prompt = current_ui["chips"][3]
 
-            # Smart Prompt Templates
             st.markdown(f"**{current_ui['prompt_templates_title']}**")
             p1, p2, p3, p4 = st.columns(4)
             with p1:
@@ -299,7 +298,6 @@ else:
                             st.markdown("### Result / परिणाम:")
                             st.write(response.text)
                             
-                            # Audio Output
                             lang_code = 'hi' if 'Hindi' in default_lang_choice else ('pa' if 'Punjabi' in default_lang_choice else 'en')
                             play_text_audio(response.text, lang_code=lang_code)
                         except Exception as e:
@@ -342,7 +340,7 @@ else:
                         except Exception as e:
                             st.error(f"Error: {e}")
 
-        # TAB 4: PDF / DOCUMENT SUMMARIZER (NEW FEATURE)
+        # TAB 4: PDF / DOCUMENT SUMMARIZER
         elif st.session_state.active_tab == 3:
             st.subheader(current_ui["tab4"])
             doc_file = st.file_uploader("Upload PDF or Text Document", type=["pdf", "txt"])
