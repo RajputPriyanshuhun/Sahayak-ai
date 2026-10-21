@@ -93,7 +93,7 @@ ui_texts = {
         "api_label": "🔑 Enter Gemini API Key",
         "api_connected": "API Connected 🟢",
         "api_required": "API Key Required 🔴",
-        "api_invalid": "Invalid API Key (Must start with 'AIza') 🔴",
+        "api_invalid": "Invalid API Key 🔴",
         "api_warn": "⚠️ Please enter your valid Gemini API Key in the sidebar to begin.",
         "api_tip": "💡 Get a free key instantly from Google AI Studio.",
         "tab1": "💬 Text Solver",
@@ -118,7 +118,7 @@ ui_texts = {
         "api_label": "🔑 जेमिनी एपीआई कुंजी दर्ज करें",
         "api_connected": "एपीआई कनेक्टेड 🟢",
         "api_required": "एपीआई कुंजी आवश्यक है 🔴",
-        "api_invalid": "अमान्य एपीआई कुंजी ('AIza' से शुरू होनी चाहिए) 🔴",
+        "api_invalid": "अमान्य एपीआई कुंजी 🔴",
         "api_warn": "⚠️ आगे बढ़ने के लिए कृपया साइडबार में अपनी वैध जेमिनी एपीआई कुंजी दर्ज करें।",
         "api_tip": "💡 Google AI Studio से तुरंत अपनी मुफ्त एपीआई कुंजी प्राप्त करें।",
         "tab1": "💬 टेक्स्ट समाधान",
@@ -143,7 +143,7 @@ ui_texts = {
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
         "api_connected": "API ਕਨੈਕਟ ਹੋ ਗਿਆ 🟢",
         "api_required": "API ਕੁੰਜੀ ਜ਼ਰੂਰੀ ਹੈ 🔴",
-        "api_invalid": "ਗਲਤ API ਕੁੰਜੀ ('AIza' ਨਾਲ ਸ਼ुरू ਹੋਵੇ) 🔴",
+        "api_invalid": "ਗਲਤ API ਕੁੰਜੀ 🔴",
         "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਸਹੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
         "api_tip": "💡 Google AI Studio ਤੋਂ ਮੁਫ਼ਤ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
@@ -195,8 +195,8 @@ st.session_state.api_key = api_key_input
 
 cleaned_key = st.session_state.api_key.strip()
 
-# STRICT API KEY VALIDATION: Must start with 'AIza' and be longer than 20 chars
-is_valid_api = bool(cleaned_key.startswith("AIza") and len(cleaned_key) > 20)
+# RELAXED VALIDATION: Checks only length to avoid rejecting valid keys
+is_valid_api = bool(len(cleaned_key) > 15)
 
 if cleaned_key:
     if is_valid_api:
