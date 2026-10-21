@@ -1,6 +1,9 @@
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
+import pypdf # Make sure pypdf is in requirements.txt
+from gtts import gTTS
+import io
 
 st.set_page_config(
     page_title="Sahayak AI1 - Multilingual Assistant", 
@@ -8,6 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
+# Session state initializations
 if "font_size" not in st.session_state:
     st.session_state.font_size = 14
 if "api_key" not in st.session_state:
@@ -17,6 +21,7 @@ if "user_prompt" not in st.session_state:
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = 0
 
+# Custom Styling
 st.markdown(f"""
     <style>
     html, body, [class*="css"] {{
@@ -77,6 +82,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
+# Multilingual UI Dictionary
 ui_texts = {
     "English": {
         "sidebar_header": "⚙️ Controls & Settings",
@@ -93,12 +99,15 @@ ui_texts = {
         "tab1": "💬 Text Solver",
         "tab2": "🎙️ Voice Helper",
         "tab3": "🖼️ Image Analyzer",
+        "tab4": "📄 PDF/Doc Summarizer",
         "t1_sub": "Describe your problem or idea:",
-        "t1_ph": "Type your question or issue here...",
+        "t1_ph": "Type your question, code, or issue here...",
         "t1_btn": "Generate Solution 🚀",
         "success": "Solution Ready!",
-        "chips_title": "💡 Quick Suggestions:",
-        "chips": ["🌾 Crop Disease Solution", "📜 Local Govt Schemes Info", "⚡ Energy Saving Tips"]
+        "chips_title": "💡 Quick Suggestion Chips:",
+        "chips": ["🌾 Crop Disease Solution", "📜 Local Govt Schemes Info", "💻 Code / Job Help", "📄 Resume Review Tips"],
+        "prompt_templates_title": "⚡ Smart Prompt Templates:",
+        "templates": ["📝 Explain Code Simply", "✉️ Write Professional Email/Post", "💡 Summarize Core Points", "🐞 Fix Code Error"]
     },
     "Hindi (हिंदी)": {
         "sidebar_header": "⚙️ नियंत्रण और सेटिंग्स",
@@ -115,12 +124,15 @@ ui_texts = {
         "tab1": "💬 टेक्स्ट समाधान",
         "tab2": "🎙️ आवाज़ सहायक",
         "tab3": "🖼️ चित्र विश्लेषक",
+        "tab4": "📄 दस्तावेज सारांश (PDF)",
         "t1_sub": "अपनी समस्या या विचार यहाँ लिखें:",
-        "t1_ph": "अपना प्रश्न या स्थानीय समस्या यहाँ टाइप करें...",
+        "t1_ph": "अपना प्रश्न या समस्या यहाँ टाइप करें...",
         "t1_btn": "समाधान प्राप्त करें 🚀",
         "success": "समाधान तैयार है!",
-        "chips_title": "💡 त्वरित सुझाव:",
-        "chips": ["🌾 फसल की बीमारी का समाधान", "📜 स्थानीय सरकारी योजना की जानकारी", "⚡ बिजली बचाने के उपाय"]
+        "chips_title": "💡 त्वरित सुझाव चिप्स:",
+        "chips": ["🌾 फसल की बीमारी का समाधान", "📜 स्थानीय सरकारी योजना", "💻 कोड / जॉब सहायता", "📄 रेज़्यूमे रिव्यू टिप्स"],
+        "prompt_templates_title": "⚡ स्मार्ट प्रॉम्प्ट टेम्पलेट्स:",
+        "templates": ["📝 कोड को सरल भाषा में समझाएं", "✉️ प्रोफेशनल ईमेल/पोस्ट लिखें", "💡 मुख्य बातें संक्षेप में बताएं", "🐞 कोड की गलती सुधारें"]
     },
     "Punjabi (ਪੰਜਾਬੀ)": {
         "sidebar_header": "⚙️ ਕੰਟਰੋਲ ਅਤੇ ਸੈਟਿੰਗਾਂ",
@@ -129,7 +141,7 @@ ui_texts = {
         "font_label": "🔤 ਫੋਂਟ ਆਕਾਰ ਕੰਟਰੋਲ",
         "current_size": "ਮੌਜੂਦਾ ਆਕਾਰ",
         "api_label": "🔑 API ਕੁੰਜੀ ਦਰਜ ਕਰੋ",
-        "api_connected": "API ਕਨੈקט ਹੋ ਗਿਆ 🟢",
+        "api_connected": "API ਕਨੈਕਟ ਹੋ ਗਿਆ 🟢",
         "api_required": "API ਕੁੰਜੀ ਜ਼ਰੂਰੀ ਹੈ 🔴",
         "api_invalid": "ਗਲਤ API ਕੁੰਜੀ 🔴",
         "api_warn": "⚠️ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਸਹੀ API ਕੁੰਜੀ ਦਰਜ ਕਰੋ।",
@@ -137,12 +149,15 @@ ui_texts = {
         "tab1": "💬 ਟੈਕਸਟ ਹੱਲ",
         "tab2": "🎙️ ਆਵਾਜ਼ ਸਹਾਇਕ",
         "tab3": "🖼️ ਤਸਵੀਰ ਵਿਸ਼ਲੇਸ਼ਕ",
+        "tab4": "📄 PDF ਸਾਰਾਂਸ਼",
         "t1_sub": "ਆਪਣੀ ਸਮੱਸਿਆ ਜਾਂ ਵਿਚਾਰ ਇੱਥੇ ਲਿਖੋ:",
         "t1_ph": "ਆਪਣਾ ਸਵਾਲ ਇੱਥੇ ਟਾਈਪ ਕਰੋ...",
         "t1_btn": "ਹੱਲ ਪ੍ਰਾਪਤ ਕਰੋ 🚀",
         "success": "ਹੱਲ ਤਿਆਰ ਹੈ!",
         "chips_title": "💡 ਤੁਰੰਤ ਸੁਝਾਅ:",
-        "chips": ["🌾 ਫਸਲ ਦੀ ਬਿਮਾਰੀ ਦਾ ਹੱਲ", "📜 ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦੀ ਜਾਣਕਾਰੀ", "⚡ ਊਰਜਾ ਬਚਾਉਣ ਦੇ ਤਰੀਕੇ"]
+        "chips": ["🌾 ਫਸਲ ਦੀ ਬਿਮਾਰੀ ਦਾ ਹੱਲ", "📜 ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਦੀ ਜਾਣਕਾਰੀ", "💻 ਕੋਡ / ਨੌਕਰੀ ਸਹਾਇਤਾ", "📄 ਰਿਜ਼ਿਊਮ ਰਿਵਿਊ ਟਿਪਸ"],
+        "prompt_templates_title": "⚡ ਸਮਾਰਟ ਪ੍ਰੋਂਪਟ ਟੈਂਪਲੇਟਸ:",
+        "templates": ["📝 ਕੋਡ ਨੂੰ ਸਰਲ ਭਾਸ਼ਾ ਵਿੱਚ ਸਮਝਾਓ", "✉️ ਪ੍ਰੋਫੈਸ਼ਨਲ ਈਮੇਲ/ਪੋਸਟ ਲਿਖੋ", "💡 ਮੁੱਖ ਗੱਲਾਂ ਦਾ ਸਾਰ", "🐞 ਕੋਡ ਦੀ ਗਲਤੀ ਠੀਕ ਕਰੋ"]
     }
 }
 
@@ -189,7 +204,7 @@ if cleaned_key:
 else:
     st.sidebar.error(current_ui['api_required'])
 
-# Always Visible Main Top Logo & Title Header
+# Top Logo Header
 st.markdown("""
     <div style="display: flex; align-items: center; gap: 15px; background: rgba(255, 255, 255, 0.03); padding: 15px 20px; border-radius: 16px; border: 1px solid rgba(99, 102, 241, 0.3); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); margin-bottom: 20px;">
         <div style="background: linear-gradient(135deg, #6366f1, #a855f7); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 0 15px rgba(99,102,241,0.6);">🤖</div>
@@ -206,9 +221,10 @@ if not cleaned_key or not is_valid_api:
 else:
     try:
         genai.configure(api_key=cleaned_key)
-        model = genai.GenerativeModel("gemini-3.8-flash")
+        model = genai.GenerativeModel("gemini-1.5-flash")
 
-        t_col1, t_col2, t_col3 = st.columns(3)
+        # 4 Navigation Tabs
+        t_col1, t_col2, t_col3, t_col4 = st.columns(4)
         with t_col1:
             if st.button(current_ui["tab1"], use_container_width=True):
                 st.session_state.active_tab = 0
@@ -218,14 +234,30 @@ else:
         with t_col3:
             if st.button(current_ui["tab3"], use_container_width=True):
                 st.session_state.active_tab = 2
+        with t_col4:
+            if st.button(current_ui["tab4"], use_container_width=True):
+                st.session_state.active_tab = 3
 
         st.markdown("---")
 
+        # Function for Text-to-Speech Output
+        def play_text_audio(text, lang_code='hi'):
+            try:
+                tts = gTTS(text=text[:300], lang=lang_code) # Limiting 300 chars for quick playback
+                fp = io.BytesIO()
+                tts.write_to_fp(fp)
+                fp.seek(0)
+                st.audio(fp, format="audio/mp3")
+            except Exception as e:
+                pass
+
+        # TAB 1: TEXT SOLVER + CHIPS + TEMPLATES
         if st.session_state.active_tab == 0:
             st.subheader(current_ui["t1_sub"])
             
+            # Quick Action Chips (4 Items)
             st.markdown(f"**{current_ui['chips_title']}**")
-            c1, c2, c3 = st.columns(3)
+            c1, c2, c3, c4 = st.columns(4)
             with c1:
                 if st.button(current_ui["chips"][0]):
                     st.session_state.user_prompt = current_ui["chips"][0]
@@ -235,6 +267,25 @@ else:
             with c3:
                 if st.button(current_ui["chips"][2]):
                     st.session_state.user_prompt = current_ui["chips"][2]
+            with c4:
+                if st.button(current_ui["chips"][3]):
+                    st.session_state.user_prompt = current_ui["chips"][3]
+
+            # Smart Prompt Templates
+            st.markdown(f"**{current_ui['prompt_templates_title']}**")
+            p1, p2, p3, p4 = st.columns(4)
+            with p1:
+                if st.button(current_ui["templates"][0]):
+                    st.session_state.user_prompt = current_ui["templates"][0] + ": "
+            with p2:
+                if st.button(current_ui["templates"][1]):
+                    st.session_state.user_prompt = current_ui["templates"][1] + ": "
+            with p3:
+                if st.button(current_ui["templates"][2]):
+                    st.session_state.user_prompt = current_ui["templates"][2] + ": "
+            with p4:
+                if st.button(current_ui["templates"][3]):
+                    st.session_state.user_prompt = current_ui["templates"][3] + ": "
 
             user_prompt = st.text_area("", value=st.session_state.user_prompt, placeholder=current_ui["t1_ph"], height=100)
             
@@ -247,14 +298,19 @@ else:
                             st.success(current_ui["success"])
                             st.markdown("### Result / परिणाम:")
                             st.write(response.text)
+                            
+                            # Audio Output
+                            lang_code = 'hi' if 'Hindi' in default_lang_choice else ('pa' if 'Punjabi' in default_lang_choice else 'en')
+                            play_text_audio(response.text, lang_code=lang_code)
                         except Exception as e:
                             st.error(f"Error: {e}")
                 else:
                     st.warning("Please type something first!")
 
+        # TAB 2: VOICE HELPER
         elif st.session_state.active_tab == 1:
             st.subheader(current_ui["tab2"])
-            audio_file = st.file_uploader("Upload audio recording (WAV, MP3)", type=["wav", "mp3", "m4a"])
+            audio_file = st.file_uploader("Upload audio recording (WAV, MP3, M4A)", type=["wav", "mp3", "m4a"])
             if audio_file is not None:
                 st.audio(audio_file)
                 if st.button("Analyze Audio 🚀", type="primary"):
@@ -268,6 +324,7 @@ else:
                         except Exception as e:
                             st.error(f"Error: {e}")
 
+        # TAB 3: IMAGE ANALYZER
         elif st.session_state.active_tab == 2:
             st.subheader(current_ui["tab3"])
             uploaded_file = st.file_uploader("Upload image...", type=["jpg", "jpeg", "png"])
@@ -284,6 +341,30 @@ else:
                             st.write(response.text)
                         except Exception as e:
                             st.error(f"Error: {e}")
+
+        # TAB 4: PDF / DOCUMENT SUMMARIZER (NEW FEATURE)
+        elif st.session_state.active_tab == 3:
+            st.subheader(current_ui["tab4"])
+            doc_file = st.file_uploader("Upload PDF or Text Document", type=["pdf", "txt"])
+            if doc_file is not None:
+                if st.button("Summarize Document 📑", type="primary"):
+                    with st.spinner("Reading & Summarizing Document..."):
+                        try:
+                            text_content = ""
+                            if doc_file.type == "application/pdf":
+                                reader = pypdf.PdfReader(doc_file)
+                                for page in reader.pages:
+                                    text_content += page.extract_text() or ""
+                            else:
+                                text_content = doc_file.read().decode("utf-8")
+
+                            prompt = f"Analyze the following document and provide an instant 3-bullet summary + key takeaways in {default_lang_choice}:\n\n{text_content[:4000]}"
+                            response = model.generate_content(prompt)
+                            st.success(current_ui["success"])
+                            st.markdown("### Document Summary / दस्तावेज सारांश:")
+                            st.write(response.text)
+                        except Exception as e:
+                            st.error(f"Error reading document: {e}")
 
     except Exception as err:
         st.error(f"Config Error: {err}")
